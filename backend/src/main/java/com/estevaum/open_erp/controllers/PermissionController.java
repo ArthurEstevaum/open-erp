@@ -9,6 +9,7 @@ import com.estevaum.open_erp.entities.User;
 import com.estevaum.open_erp.repositories.PermissionRepository;
 import com.estevaum.open_erp.repositories.UserRepository;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,15 +57,15 @@ public class PermissionController {
         return ResponseEntity.badRequest().build();
     }
 
-    @DeleteMapping("/users/permissions")
-    public ResponseEntity<Object> deletePermissions(@RequestBody @Valid PermissionManagementDTO permissionData) {
-        Boolean userExists = userRepository.existsByUsername(permissionData.username());
-        List<String> existentPermissions = permissionData.permissionList().stream().filter((permission) -> {
+    @DeleteMapping("/users/permissions/{username}")
+    public ResponseEntity<Object> deletePermissions(@PathVariable String username, @RequestParam List<String> permissions) {
+        Boolean userExists = userRepository.existsByUsername(username);
+        List<String> existentPermissions = permissions.stream().filter((permission) -> {
             return permissionRepository.existsByName(permission);
         }).toList();
         List<Permission> permissionsToDelete = existentPermissions.stream().map(permission -> permissionRepository.findByName(permission)).toList();
         if(userExists && !existentPermissions.isEmpty()) {
-            User user = userRepository.findByUsername(permissionData.username());
+            User user = userRepository.findByUsername(username);
             permissionsToDelete.forEach(user.getPermissions()::remove);
             userRepository.save(user);
             return ResponseEntity.ok().build();
