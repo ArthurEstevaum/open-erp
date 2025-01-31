@@ -7,13 +7,15 @@ import com.estevaum.open_erp.entities.User;
 import com.estevaum.open_erp.repositories.UserRepository;
 import com.estevaum.open_erp.services.TokenService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 @RestController
 public class UserController {
@@ -30,8 +32,13 @@ public class UserController {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
         var token = tokenService.generateToken((User) auth.getPrincipal());
+        List<String> permissions = ((User) auth.getPrincipal()).getPermissions().stream().map(permission -> permission.getName()).toList();
+        if(((User) auth.getPrincipal()).getIsAdmin()) {
+            List <String> permissionsWithAdmin = Stream.concat(permissions.stream(), Stream.of("admin")).toList();
+            return ResponseEntity.ok(new LoginResponseDTO(token, permissionsWithAdmin));
+        }
 
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+        return ResponseEntity.ok(new LoginResponseDTO(token, permissions));
     }
 
     @PostMapping("/auth/register")
