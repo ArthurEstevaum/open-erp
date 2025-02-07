@@ -1,4 +1,3 @@
-import "@/test.css"
 import logo from '@/assets/logo.png';
 
 const Home = () => {
@@ -17,11 +16,10 @@ const Home = () => {
 
 const Header = () => (
     <header className="header">
-        <div className="container flex justify-center align-middle">
-            <img width={120} src={logo} alt="open-erp-logo" className="invert" />
-            <h1>Open ERP</h1>
+        <div className="w-full sticky top-0 z-10 flex justify-between items-center p-4 border-b-[1px] border-gray-600'[">
+            <img width={96} src={logo} alt="open-erp-logo" className="dark:invert" />
             <nav>
-                <ul>
+                <ul className='flex space-x-4 md:space-x-8 mr-5'>
                     <li><a href="#benefits">Benefícios</a></li>
                     <li><a href="#features">Funcionalidades</a></li>
                     <li><a href="#testimonials">Testemunhos</a></li>
