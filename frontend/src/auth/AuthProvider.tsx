@@ -5,7 +5,7 @@ import { AuthContext } from "./AuthContext";
 export default function AuthProvider() {
     const [ isAuthenticated, setIsAuthenticated ] = useState<boolean>(!!localStorage.getItem("token"))
 
-    const [ permissions, setPermissions ] = useState<string>(JSON.parse(localStorage.getItem("permissions")?? ""))
+    const [ permissions, setPermissions ] = useState<string>(JSON.parse(localStorage.getItem("permissions")) ?? "")
 
     function login(token: string, permissions: string[]) {
         localStorage.setItem("token", token)
